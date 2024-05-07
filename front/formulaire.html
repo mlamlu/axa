@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouveau devis</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Nouveau devis</h1>
+    <form id="numeroOpportuniteForm">
+        <div>
+            <label for="numeroOpportunite">Numéro d'opportunité :</label>
+            <input type="text" id="numeroOpportunite" name="numeroOpportunite" required>
+        </div>
+        <button type="submit">Continuer</button>
+    </form>
+    <form id="nouveauDevisForm" style="display: none;">
+            <div>
+                <label for="referenceDossier">Référence du dossier :</label>
+                <input type="text" id="referenceDossier" name="referenceDossier" required>
+            </div>
+            <div>
+                <label for="numeroSiret">Numéro SIRET SIREN :</label>
+                <input type="text" id="numeroSiret" name="numeroSiret" required>
+            </div>
+            <div>
+                <label for="affaire">Affaire :</label>
+                <input type="text" id="affaire" name="affaire" required>
+            </div>
+            <div>
+                <label for="nomClient">Nom du client :</label>
+                <input type="text" id="nomClient" name="nomClient" required>
+            </div>
+            <div>
+                <label for="intermediaire">Intermédiaire (Nom + Code portefeuille) :</label>
+                <input type="text" id="intermediaire" name="intermediaire" required>
+            </div>
+            <div>
+                <label for="description">Description :</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+            </div>
+            <div>
+                <label for="imageDescription">Image en lien avec la description :</label>
+                <input type="file" id="imageDescription" name="imageDescription" accept="image/*">
+            </div>
+            <div>
+                <label>Présence d’une coassurance :</label><br>
+                <input type="radio" id="coassuranceOui" name="coassurance" value="Oui">
+                <label for="coassuranceOui">Oui</label>
+                <input type="radio" id="coassuranceNon" name="coassurance" value="Non" checked>
+                <label for="coassuranceNon">Non</label>
+            </div>
+            <div>
+                <label for="adresseOperation">Adresse de l'opération :</label>
+                <input type="text" id="adresseOperation" name="adresseOperation" required>
+            </div>
+            <div>
+                <label for="planAdresseOperation">Plan de l'adresse de l'opération :</label>
+                <input type="file" id="planAdresseOperation" name="planAdresseOperation" accept="image/*" multiple>
+            </div>
+            <div>
+                <label for="descriptifOperation">Descriptif détaillé de l'opération :</label>
+                <textarea id="descriptifOperation" name="descriptifOperation" rows="4" required></textarea>
+            </div>
+            <div>
+                <label for="coutOperation">Coût de l'opération (tarif) :</label>
+                <input type="number" id="coutOperation1" name="coutOperation1" step="0.01" placeholder="Montant 1" required>
+                <input type="number" id="coutOperation2" name="coutOperation2" step="0.01" placeholder="Montant 2" required>
+                <input type="text" id="totalMontant" name="totalMontant" readonly>
+            </div>
+            <button type="submit">Valider</button>
+    </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    <script>
+        window.jsPDF = window.jspdf.jsPDF;
+        document.addEventListener('DOMContentLoaded', () => {
+            const numeroOpportuniteForm = document.getElementById('numeroOpportuniteForm');
+            const nouveauDevisForm = document.getElementById('nouveauDevisForm');
+
+            numeroOpportuniteForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const numeroOpportunite = document.getElementById('numeroOpportunite').value;
+                if (numeroOpportunite.trim() !== '') {
+                    numeroOpportuniteForm.style.display = 'none';
+                    nouveauDevisForm.style.display = 'block';
+                } else {
+                    alert('Veuillez saisir un numéro d\'opportunité.');
+                }
+            });
+
+            nouveauDevisForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                generatePDF();
+            });
+
+            const coutOperation1 = document.getElementById('coutOperation1');
+            const coutOperation2 = document.getElementById('coutOperation2');
+            const totalMontant = document.getElementById('totalMontant');
+
+            function updateTotal() {
+                const montant1 = parseFloat(coutOperation1.value) || 0;
+                const montant2 = parseFloat(coutOperation2.value) || 0;
+                const total = montant1 + montant2;
+                totalMontant.value = total.toFixed(2);
+            }
+            coutOperation1.addEventListener('input', updateTotal);
+            coutOperation2.addEventListener('input', updateTotal);
+        });
+
+        function generatePDF() {
+            const doc = new jsPDF();
+            const numeroOpportunite = document.getElementById('numeroOpportunite').value;
+            const referenceDossier = document.getElementById('referenceDossier').value;
+            const numeroSiret = document.getElementById('numeroSiret').value;
+            const affaire = document.getElementById('affaire').value;
+            const nomClient = document.getElementById('nomClient').value;
+            const intermediaire = document.getElementById('intermediaire').value;
+            const description = document.getElementById('description').value;
+            const coassurance = document.querySelector('input[name="coassurance"]:checked').value;
+            const adresseOperation = document.getElementById('adresseOperation').value;
+            const coutOperation1 = document.getElementById('coutOperation1').value;
+            const coutOperation2 = document.getElementById('coutOperation2').value;
+            const totalMontant = document.getElementById('totalMontant').value;
+
+            doc.text(`Numéro d'opportunité: ${numeroOpportunite}`, 10, 10);
+            doc.text(`Référence du dossier: ${referenceDossier}`, 10, 20);
+            doc.text(`Numéro SIRET SIREN: ${numeroSiret}`, 10, 30);
+            doc.text(`Affaire: ${affaire}`, 10, 40);
+            doc.text(`Nom du client: ${nomClient}`, 10, 50);
+            doc.text(`Intermédiaire: ${intermediaire}`, 10, 60);
+            doc.text(`Description: ${description}`, 10, 70);
+            doc.text(`Présence d’une coassurance: ${coassurance}`, 10, 80);
+            doc.text(`Adresse de l'opération: ${adresseOperation}`, 10, 90);
+            doc.text(`Montant 1: ${coutOperation1}`, 10, 100);
+            doc.text(`Montant 2: ${coutOperation2}`, 10, 110);
+            doc.text(`Total: ${totalMontant}`, 10, 120);
+            const now = new Date();
+            const date = now.toLocaleDateString('fr-FR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            const time = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            const fileName = `Projet de contrat_${numeroOpportunite}_${date}_${time}.pdf`;
+            doc.save(fileName);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application d'assurance</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <h1>Liste des devis</h1>
+    <table id="devisTable">
+        <thead>
+            <tr>
+                <th>Numéro d'opportunité</th>
+                <th>Nom du client</th>
+                <th>Tarif proposé</th>
+                <th>&#128193</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button id="opportunite">Nouvelle opportunité</button>
+    <h1>Nouveau devis</h1>
+    <form id="nouveauDevisForm">
+        <div>
+            <label for="numeroOpportunite">Numéro d'opportunité :</label>
+            <input type="text" id="numeroOpportunite" name="numeroOpportunite" required>
+        </div>
+        <div>
+            <label for="nomClient">Nom du client :</label>
+            <input type="text" id="nomClient" name="nomClient" required>
+        </div>
+        <div>
+            <label for="tarifPropose">Tarif proposé :</label>
+            <input type="number" id="tarifPropose" name="tarifPropose" step="0.01" required>
+        </div>
+        <div>
+            <label for="documentUrl">URL du document :</label>
+            <input type="url" id="documentUrl" name="documentUrl" required>
+        </div>
+        <button type="submit">Enregistrer</button>
+    </form>
+</body>
+</html>
